@@ -52,8 +52,8 @@ export default function SplashScreen({ onFinish }) {
         <View style={styles.iconContainer}>
           <Ionicons name="receipt" size={80} color="#6366f1" />
         </View>
-        <Text style={styles.appName}>SmartBilling</Text>
-        <Text style={styles.tagline}>Smart Billing Solution</Text>
+        <Text style={styles.appName}>ScanPay</Text>
+        <Text style={styles.tagline}>Smart Payment Solution</Text>
       </Animated.View>
       
       <Animated.View style={[styles.footer, { opacity: fadeAnim }]}>

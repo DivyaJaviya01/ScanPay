@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, Animated, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import SplashScreen from './components/SplashScreen';
+import SplashScreenComponent from './components/SplashScreen';
 import CustomTabBar from './components/CustomTabBar';
 import Home from './screens/Home';
 import Scanner from './screens/Scanner';
@@ -41,14 +41,15 @@ export default function App() {
     setShowSplash(false);
   };
 
+  // Show animated splash screen
   if (showSplash) {
-    return <SplashScreen onFinish={handleSplashFinish} />;
+    return <SplashScreenComponent onFinish={handleSplashFinish} />;
   }
 
   return (
     <NavigationContainer>
       <Tab.Navigator
-        tabBar={(props) => <CustomTabBar {...props} />}
+        tabBar={(props) => <CustomTabBar {...props} cart={cart} paymentData={paymentData} />}
         screenOptions={{
           headerStyle: {
             backgroundColor: '#6366f1',
@@ -60,11 +61,11 @@ export default function App() {
         <Tab.Screen 
           name="Home" 
           options={{
-            title: 'SmartBilling',
-            headerTitle: 'SmartBilling',
+            title: 'ScanPay',
+            headerTitle: 'ScanPay',
           }}
         >
-          {() => <Home cart={cart} setCart={setCart} paymentData={paymentData} />}
+          {() => <Home cart={cart} setCart={setCart} paymentData={paymentData} setPaymentData={setPaymentData} />}
         </Tab.Screen>
         
         <Tab.Screen 
@@ -74,7 +75,7 @@ export default function App() {
             headerTitle: 'QR Codes',
           }}
         >
-          {() => <QRCodes paymentData={paymentData} />}
+          {() => <QRCodes cart={cart} setCart={setCart} paymentData={paymentData} setPaymentData={setPaymentData} />}
         </Tab.Screen>
         
         <Tab.Screen 
@@ -84,7 +85,7 @@ export default function App() {
             headerTitle: 'Scan Product',
           }}
         >
-          {() => <Scanner cart={cart} setCart={setCart} paymentData={paymentData} />}
+          {() => <Scanner cart={cart} setCart={setCart} paymentData={paymentData} setPaymentData={setPaymentData} />}
         </Tab.Screen>
         
         <Tab.Screen 
@@ -94,7 +95,7 @@ export default function App() {
             headerTitle: 'View Bill',
           }}
         >
-          {() => <Bill cart={cart} setCart={setCart} onProceedToPayment={proceedToPayment} paymentData={paymentData} />}
+          {() => <Bill cart={cart} setCart={setCart} onProceedToPayment={proceedToPayment} paymentData={paymentData} setPaymentData={setPaymentData} />}
         </Tab.Screen>
 
         <Tab.Screen 
@@ -125,7 +126,7 @@ export default function App() {
             headerTitle: 'Cashier System',
           }}
         >
-          {() => <Cashier paymentData={paymentData} />}
+          {() => <Cashier cart={cart} setCart={setCart} paymentData={paymentData} setPaymentData={setPaymentData} />}
         </Tab.Screen>
       </Tab.Navigator>
     </NavigationContainer>

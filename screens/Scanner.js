@@ -111,7 +111,7 @@ export default function Scanner({ cart, setCart }) {
       setBarcodeInput('');
       Alert.alert("Success", `${product.name} added to cart!`);
     } else {
-      Alert.alert("Not Found", "Product not found. Please enter 1, 2, or 3.");
+      Alert.alert("Not Found", "Product not found. Please enter a number between 1 and 23.");
     }
   };
 
@@ -173,9 +173,9 @@ export default function Scanner({ cart, setCart }) {
               }}
               value={barcodeInput}
               onChangeText={setBarcodeInput}
-              placeholder="1, 2, or 3"
+              placeholder="Enter Barcode Number"
               keyboardType="numeric"
-              maxLength={1}
+              maxLength={2}
             />
             
             <Button 
@@ -272,9 +272,9 @@ export default function Scanner({ cart, setCart }) {
               }}
               value={barcodeInput}
               onChangeText={setBarcodeInput}
-              placeholder="1, 2, or 3"
+              placeholder="Enter 1-23"
               keyboardType="numeric"
-              maxLength={1}
+              maxLength={2}
             />
             
             <Button 

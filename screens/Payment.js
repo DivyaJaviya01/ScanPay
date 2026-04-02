@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Button, Alert, TextInput, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { generateOTP, addOTPTodatabase, getOrderByOTP, approveOrder } from '../utils/otpDatabase';
+import QRCode from 'react-native-qrcode-svg';
 
 export default function Payment({ cart, setCart, onPaymentComplete, onCancel }) {
   const [selectedMethod, setSelectedMethod] = useState('');
@@ -12,6 +13,18 @@ export default function Payment({ cart, setCart, onPaymentComplete, onCancel }) 
   const [isApproved, setIsApproved] = useState(false);
 
   const totalAmount = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  // Generate UPI QR code data for Google Pay
+  const generateUPIQRData = () => {
+    const upiId = 'scanpay@ybl'; // Fake UPI ID for ScanPay
+    const merchantName = 'ScanPay';
+    const transactionNote = `Payment for order ${generatedOtp}`;
+    
+    // UPI URL format for QR codes
+    const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${totalAmount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
+    
+    return upiUrl;
+  };
 
   const generateAndSendOTP = () => {
     const newOtp = generateOTP();
@@ -255,42 +268,104 @@ export default function Payment({ cart, setCart, onPaymentComplete, onCancel }) 
 
           <View style={{ backgroundColor: '#fff', padding: 20, borderRadius: 12, marginBottom: 20, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}>
             <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 20, color: '#1f2937' }}>
-              Payment QR Code
+              ScanPay Payment QR Code
             </Text>
             
             <View style={{ 
-              width: 200, 
-              height: 200, 
-              backgroundColor: '#000', 
-              justifyContent: 'center', 
-              alignItems: 'center',
+              backgroundColor: '#fff', 
+              padding: 15, 
               borderRadius: 12,
-              marginBottom: 20
+              borderWidth: 2,
+              borderColor: '#6366f1',
+              marginBottom: 20,
+              shadowColor: '#6366f1',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              elevation: 5,
             }}>
-              <View style={{ backgroundColor: '#fff', padding: 10, borderRadius: 8 }}>
-                <Text style={{ fontSize: 48, fontWeight: 'bold', color: '#000' }}>₹</Text>
-              </View>
+              <QRCode
+                value={generateUPIQRData()}
+                size={200}
+                color="#000000"
+                backgroundColor="#ffffff"
+              />
             </View>
             
-            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#6366f1', marginBottom: 10 }}>
-              ₹{totalAmount}
-            </Text>
+            <View style={{ alignItems: 'center', marginBottom: 20 }}>
+              <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#6366f1', marginBottom: 5 }}>
+                ₹{totalAmount}
+              </Text>
+              <Text style={{ fontSize: 14, color: '#6b7280', textAlign: 'center' }}>
+                Pay to ScanPay
+              </Text>
+              <Text style={{ fontSize: 12, color: '#9ca3af', textAlign: 'center', marginTop: 2 }}>
+                UPI ID: scanpay@ybl
+              </Text>
+            </View>
             
-            <Text style={{ fontSize: 14, color: '#6b7280', textAlign: 'center', marginBottom: 20 }}>
-              Scan this QR code with any payment app{'\n'}(GPay, PhonePe, Paytm, etc.)
-            </Text>
+            <View style={{ 
+              backgroundColor: '#f0f9ff', 
+              padding: 12, 
+              borderRadius: 8, 
+              borderLeftWidth: 4, 
+              borderLeftColor: '#0ea5e9',
+              marginBottom: 20,
+              width: '100%'
+            }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                <Ionicons name="information-circle" size={16} color="#0ea5e9" />
+                <Text style={{ fontSize: 14, fontWeight: '600', marginLeft: 4, color: '#0ea5e9' }}>
+                  How to pay:
+                </Text>
+              </View>
+              <Text style={{ fontSize: 12, color: '#0c4a6e', lineHeight: 16 }}>
+                1. Open Google Pay, PhonePe, or any UPI app{'\n'}
+                2. Scan this QR code{'\n'}
+                3. Verify amount: ₹{totalAmount}{'\n'}
+                4. Enter UPI PIN to complete payment
+              </Text>
+            </View>
             
-            <Button 
-              title="I've Paid"
+            <TouchableOpacity 
+              title="Pay"
               onPress={completePayment}
-              color="#10b981"
+              style={{
+                backgroundColor: isApproved ? '#10b981' : '#d1d5db',
+                paddingVertical: 14,
+                paddingHorizontal: 32,
+                borderRadius: 12,
+                alignItems: 'center',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                width: '100%'
+              }}
               disabled={isProcessing || !isApproved}
-            />
+            >
+              <Ionicons 
+                name="card" 
+                size={20} 
+                color={isApproved ? '#ffffff' : '#9ca3af'} 
+                style={{ marginRight: 8 }}
+              />
+              <Text style={{
+                color: isApproved ? '#ffffff' : '#6b7280',
+                fontSize: 16,
+                fontWeight: 'bold'
+              }}>
+                Pay
+              </Text>
+            </TouchableOpacity>
             
             {!isApproved && (
-              <Text style={{ color: '#ef4444', textAlign: 'center', marginTop: 10 }}>
-                Waiting for cashier approval...
-              </Text>
+              <View style={{ alignItems: 'center', marginTop: 12 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons name="time" size={16} color="#ef4444" />
+                  <Text style={{ color: '#ef4444', marginLeft: 4, fontSize: 14 }}>
+                    Waiting for cashier approval...
+                  </Text>
+                </View>
+              </View>
             )}
           </View>
 
@@ -481,8 +556,7 @@ export default function Payment({ cart, setCart, onPaymentComplete, onCancel }) 
         {/* Proceed to Payment */}
         {selectedMethod && (
           <View style={{ backgroundColor: '#fff', padding: 20, borderRadius: 12, marginBottom: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}>
-            <Button 
-              title="💳 Proceed to Payment"
+            <TouchableOpacity 
               onPress={() => {
                 // Check if order still exists before proceeding
                 const order = getOrderByOTP(generatedOtp);
@@ -513,14 +587,52 @@ export default function Payment({ cart, setCart, onPaymentComplete, onCancel }) 
                   completePayment();
                 }
               }}
-              color="#10b981"
+              style={{
+                backgroundColor: isApproved ? '#10b981' : '#d1d5db',
+                paddingVertical: 16,
+                paddingHorizontal: 24,
+                borderRadius: 12,
+                alignItems: 'center',
+                flexDirection: 'row',
+                justifyContent: 'center'
+              }}
               disabled={!isApproved}
-            />
+            >
+              <Ionicons 
+                name="card" 
+                size={20} 
+                color={isApproved ? '#ffffff' : '#9ca3af'} 
+                style={{ marginRight: 8 }}
+              />
+              <Text style={{
+                color: isApproved ? '#ffffff' : '#6b7280',
+                fontSize: 16,
+                fontWeight: 'bold'
+              }}>
+                Proceed to Payment
+              </Text>
+            </TouchableOpacity>
             
             {!isApproved && (
-              <Text style={{ color: '#ef4444', textAlign: 'center', marginTop: 10 }}>
-                Waiting for cashier approval...
-              </Text>
+              <View style={{ alignItems: 'center', marginTop: 12 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons name="time" size={16} color="#ef4444" />
+                  <Text style={{ color: '#ef4444', marginLeft: 4, fontSize: 14 }}>
+                    Waiting for cashier approval...
+                  </Text>
+                </View>
+              </View>
+            )}
+            
+            {isApproved && (
+              <View style={{ alignItems: 'center', marginTop: 12 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons name="checkmark-circle" size={16} color="#10b981" />
+                  <Text style={{ color: '#10b981', marginLeft: 4, fontSize: 14 }}>
+                    Cashier approved! You can proceed with payment.
+                  </Text>
+                </View>
+              </View>
             )}
           </View>
         )}

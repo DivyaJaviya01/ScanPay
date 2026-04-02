@@ -41,7 +41,7 @@ export default function Home({ cart }) {
                 </View>
                 <View>
                   <Text style={{ color: '#fff', fontSize: 24, fontWeight: 'bold' }}>
-                    SmartBilling
+                    ScanPay
                   </Text>
                   <Text style={{ color: '#e0e7ff', fontSize: 14 }}>
                     Smart Billing Solution

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Animated, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const CustomTabBar = ({ state, descriptors, navigation }) => {
+const CustomTabBar = ({ state, descriptors, navigation, cart = [], paymentData = null }) => {
   const animatedValues = useRef(
     state.routes.map(() => new Animated.Value(1))
   ).current;
@@ -37,6 +37,29 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
     }).start();
   }, [state.index]);
 
+  const getBadgeCount = (tabName) => {
+    const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+    
+    switch (tabName) {
+      case 'Bill':
+        return totalItems > 0 ? totalItems.toString() : null;
+      case 'Payment':
+        return paymentData ? '!' : null;
+      default:
+        return null;
+    }
+  };
+
+  const renderBadge = (count) => {
+    if (!count) return null;
+    
+    return (
+      <View style={styles.badge}>
+        <Text style={styles.badgeText}>{count}</Text>
+      </View>
+    );
+  };
+
   const handlePress = (routeName, index) => {
     const event = navigation.emit({
       type: 'tabPress',
@@ -56,6 +79,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
         const animatedStyle = {
           transform: [{ scale: animatedValues[index] }],
         };
+        const badgeCount = getBadgeCount(tab.name);
 
         return (
           <TouchableOpacity
@@ -70,6 +94,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
                 size={24}
                 color={isFocused ? '#fff' : '#a5b4fc'}
               />
+              {renderBadge(badgeCount)}
             </Animated.View>
             <Text style={[styles.label, { color: isFocused ? '#fff' : '#a5b4fc' }]}>
               {tab.label}
@@ -106,10 +131,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 2,
+    position: 'relative',
   },
   label: {
     fontSize: 11,
     fontWeight: '600',
+    textAlign: 'center',
+  },
+  badge: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    backgroundColor: '#ef4444',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 6,
+    zIndex: 1,
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
     textAlign: 'center',
   },
 });

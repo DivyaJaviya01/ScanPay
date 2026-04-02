@@ -4,6 +4,12 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "start:dev": "expo start --dev-client --clear",
+    "start:clear": "expo start --clear",
+    "start:tunnel": "expo start --tunnel",
+    "start:lan": "expo start --lan",
+    "build:android": "expo build:android",
+    "build:ios": "expo build:ios",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
