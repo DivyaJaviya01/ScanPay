@@ -24,8 +24,8 @@ A modern React Native mobile application built with Expo that provides a smart b
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/scanpay.git
-   cd scanpay
+   git clone https://github.com/DivyaJaviya01/ScanPay.git
+   cd ScanPay
    ```
 
 2. **Install dependencies**
@@ -41,12 +41,19 @@ A modern React Native mobile application built with Expo that provides a smart b
 
 1. **Start the development server**
    ```bash
+   # Recommended: Uses npx (no global installation needed)
+   npx expo start
+   
+   # Alternative: Using npm script (runs expo start internally)
    npm start
-   # or
+   
+   # Alternative: Requires global Expo CLI installation
    expo start
    ```
 
 2. **Scan the QR code** with Expo Go app on your iOS or Android device
+
+**Note**: `npx expo start` is the most reliable option as it doesn't require global Expo CLI installation and always uses the compatible version.
 
 #### Option 2: Running on Simulator/Emulator
 
@@ -66,11 +73,23 @@ npm run web
 
 ## 📋 Available Scripts
 
-- `npm start` - Start the Expo development server
+- `npm start` - Start the Expo development server (same as `expo start`)
 - `npm run android` - Run on Android device/emulator
 - `npm run ios` - Run on iOS device/simulator
 - `npm run web` - Run in web browser
 - `npm run lint` - Run ESLint for code quality checks
+- `npm run reset-project` - Reset project to clean state
+
+## 🔧 TypeScript Configuration
+
+This project is configured with TypeScript support. The `tsconfig.json` includes:
+
+- **Expo Types**: `.expo/types/**/*.ts` and `expo-env.d.ts` for Expo-specific type definitions
+- **React Native JSX**: Configured for React Native components
+- **Strict Mode**: Enabled for better type safety
+- **Module Resolution**: Set to Node.js style resolution
+
+The TypeScript configuration ensures proper autocompletion and type checking for all Expo and React Native APIs.
 
 ## 🛠 Tech Stack
 
@@ -105,13 +124,15 @@ scanpay/
 
 ### Environment Setup
 
-1. Install Expo CLI globally:
+1. **Install Expo CLI globally (optional but recommended)**
    ```bash
    npm install -g @expo/cli
    ```
+   *Note: You can also use `npx expo start` without global installation*
 
-2. For iOS development, install Xcode (macOS only)
-3. For Android development, install Android Studio
+2. **For iOS development**, install Xcode (macOS only)
+3. **For Android development**, install Android Studio
+4. **Verify TypeScript support** - The project includes proper TypeScript configuration for Expo
 
 ### Adding New Features
 
